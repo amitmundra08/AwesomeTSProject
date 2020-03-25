@@ -10,13 +10,14 @@ interface Props {
 export default class LoaderScreen extends React.Component<Props> {
     componentDidMount() {
         firebaseAuth.onAuthStateChanged((user: any) => {
-          this.props.navigation.navigate(user ? 'Home' : 'SignUp')
+          this.props.navigation.navigate(user ? 'Home' : 'Login')
         })
     }
     render() {
     return (
         <View style={styles.container}>
-            <Text>{strings.loading}</Text>
+            <Text style={{fontSize: 20, marginVertical: 16}}>{strings.loading}</Text>
+            <Text style={{fontSize: 16, marginBottom: 8,color: 'grey'}}>{strings.take_a_while}</Text>
             <ActivityIndicator size="large" color='#44337A'/>
         </View>
     )}

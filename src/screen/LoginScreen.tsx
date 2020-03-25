@@ -3,13 +3,19 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  ImageBackground
 } from 'react-native';
 import { firebaseAuth } from '../environment/config';
 import { strings } from '../constants';
+import { Container, Button, Card, } from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome5'
+const height = Dimensions.get('screen').height
+const width = Dimensions.get('screen').width
+const successImageUri = require('../../1.jpg');
+
 
 interface Props {
   navigation: any
@@ -37,41 +43,51 @@ export default class LoginScreen extends React.Component<Props, State> {
       .catch(error => this.setState({ errorMessage: error.message }));
   };
   render() {
+
     const {errorMessage, password, email} = this.state
+    console.log('errorMessage', errorMessage)
     return (
-        <View style={styles.container}>
-          <View style={styles.headingSection}>
-          </View>
-          <Text style={styles.heading}>{strings.login}</Text>
-          {errorMessage && (
-            <Text style={{color: 'red'}}>{errorMessage}</Text>
-          )}
-          <TextInput
-            placeholder="Email"
-            autoCapitalize="none"
-            style={styles.textInput}
-            onChangeText={email => this.setState({email})}
-            value={email}
-          />
-          <TextInput
-            secureTextEntry
-            placeholder="Password"
-            autoCapitalize="none"
-            style={styles.textInput}
-            onChangeText={password => this.setState({password})}
-            value={password}
-          />
-          <TouchableOpacity onPress={this.handleLogin}>
-            <View style={styles.signupBtn}>
-              <Text style={styles.buttonText}>{strings.login}</Text>
-            </View>
-          </TouchableOpacity>
-          <Button
-            title={strings.dont_have_account}
-            color="#44337A"
-            onPress={() => this.props.navigation.navigate('SignUp')}
-          />
-        </View>
+        <Container>
+            <ImageBackground source={successImageUri}
+                style={styles.fullwidthHeight}
+                resizeMode='cover'
+            >
+                <Card style={{backgroundColor: '#FFFFF0'}}>
+                    <View style={{justifyContent: 'center', alignItems: 'center', margin: 16}}>
+                    <Icon name='user' size={25} color='#44337A'/>
+                    <Text style={styles.heading}>{strings.login}</Text>
+                        {errorMessage && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
+                        <TextInput
+                            placeholder="Email"
+                            autoCapitalize="none"
+                            style={styles.textInput}
+                            onChangeText={email => this.setState({ email })}
+                            value={email}
+                        />
+                        <TextInput
+                            secureTextEntry
+                            placeholder="Password"
+                            autoCapitalize="none"
+                            style={styles.textInput}
+                            onChangeText={password => this.setState({ password })}
+                            value={password}
+                        />
+                        <TouchableOpacity onPress={this.handleLogin}>
+                            <View style={styles.signupBtn}>
+                                <Text style={styles.buttonText}>{strings.login}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    <View>
+                        <Text>{strings.dont_have_account}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('SignUp')}>
+                         <Text style={{fontSize: 20, color: '#44337A'}}>{strings.sign_up}</Text>
+                    </TouchableOpacity>
+                    </View>
+                    </Card>
+            
+        </ImageBackground>
+        </Container>
     );
   }
 }
@@ -99,7 +115,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginTop: 8,
     color: '#44337A',
-    borderRadius: 4
+    borderRadius: 4,        
+    backgroundColor: '#FAF5FF'
   },
   signupBtn: {
     borderRadius: 5,
@@ -117,4 +134,10 @@ const styles = StyleSheet.create({
     color: '#44337A',
     textAlign: 'center'
   },
+  fullwidthHeight: {
+    width: width,
+    height: height,
+    justifyContent: 'center',
+    padding: 16
+}
 });

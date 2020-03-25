@@ -1,7 +1,13 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Dimensions, TouchableOpacity, ImageBackground } from 'react-native';
 import { firebaseAuth } from '../environment/config';
 import { strings } from '../constants';
+import { Container, Button, Card, } from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome5'
+const height = Dimensions.get('screen').height
+const width = Dimensions.get('screen').width
+const successImageUri = require('../../1.jpg');
+
 
 interface Props {
     navigation: any
@@ -30,39 +36,51 @@ export default class SignUp extends React.Component<Props, State> {
     render() {
         const {errorMessage, email, password} = this.state
         return (
-            <View style={styles.container}>
-                <View style={styles.headingSection}>
-                </View>
-                <Text style={styles.heading}>{strings.sign_up}</Text>
-                    {errorMessage &&
-                    <Text style={{ color: 'red' }}>
-                    {errorMessage}
-                    </Text>}
-                    <TextInput
-                    placeholder="Email"
-                    autoCapitalize="none"
-                    style={styles.textInput}
-                    onChangeText={email => this.setState({ email })}
-                    value={email}
-                    />
-                    <TextInput
-                    secureTextEntry
-                    placeholder="Password"
-                    autoCapitalize="none"
-                    style={styles.textInput}
-                    onChangeText={password => this.setState({ password })}
-                    value={password}
-                    />
-                    <TouchableOpacity onPress={this.handleSignUp}>
-                    <View style={styles.signupBtn}>
-                        <Text style={styles.buttonText}>{strings.sign_up}</Text>
-                    </View>
-                    </TouchableOpacity>
-                    <Button color="#44337A"
-                    title={strings.already_have_an_account}
-                    onPress={() => this.props.navigation.navigate('Login')}
-                    />
-            </View>
+            <Container>
+                <ImageBackground source={successImageUri}
+                    style={styles.fullwidthHeight}
+                    resizeMode='cover'
+                >
+                    <Card style={{backgroundColor: '#FFFFF0'}}>
+                        <View style={{justifyContent: 'center', alignItems: 'center', margin: 16}}>
+                        <Icon name='user' size={25} color='#44337A'/>
+                        <Text style={styles.heading}>{strings.sign_up}</Text>
+                            {errorMessage && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
+                            <TextInput
+                                placeholder="Email"
+                                autoCapitalize="none"
+                                style={styles.textInput}
+                                onChangeText={email => this.setState({ email })}
+                                value={email}
+                            />
+                            <TextInput
+                                secureTextEntry
+                                placeholder="Password"
+                                autoCapitalize="none"
+                                style={styles.textInput}
+                                onChangeText={password => this.setState({ password })}
+                                value={password}
+                            />
+                            <TouchableOpacity onPress={this.handleSignUp}>
+                                <View style={styles.signupBtn}>
+                                    <Text style={styles.buttonText}>{strings.sign_up}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        {/* <Button color="#44337A"
+                        title={strings.already_have_an_account}
+                        onPress={() => this.props.navigation.navigate('Login')}
+                        /> */}
+                        <View>
+                            <Text>{strings.already_have_an_account}</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
+                             <Text style={{fontSize: 20, color: '#44337A'}}>{strings.login}</Text>
+                        </TouchableOpacity>
+                        </View>
+                        </Card>
+                
+            </ImageBackground>
+            </Container>
         )
     }
 }
@@ -72,6 +90,20 @@ const styles = StyleSheet.create({
         height: heightConst - 50,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    buttonDiv: {
+        backgroundColor: 'white',
+        marginTop: 16,
+        marginBottom: 16,
+        justifyContent: 'center',
+        width: 100
+    },
+    buttonDivText: {
+        color: 'red',
+        textAlign: 'center'
+    },
+    marginLR: {
+        marginHorizontal: 18
     },
     headingSection: {
         // borderColor: 1,
@@ -91,7 +123,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginTop: 8,
         color: '#44337A',
-        borderRadius: 4
+        borderRadius: 4,
+        backgroundColor: '#FAF5FF'
     },
     signupBtn: {
         borderRadius: 5,
@@ -108,5 +141,11 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#44337A',
         textAlign: 'center'
+    },
+    fullwidthHeight: {
+        width: width,
+        height: height,
+        justifyContent: 'center',
+        padding: 16
     }
 })

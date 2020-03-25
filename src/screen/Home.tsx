@@ -8,7 +8,8 @@ import {
   TouchableNativeFeedback,
   Alert,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Image
 } from 'react-native'
 import Video from 'react-native-video'
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -17,6 +18,9 @@ import Comments from './components/Comments'
 import { strings } from '../../src/constants'
 import {videoData} from '../data-sources/videoData'
 import { firebaseAuth } from '../environment/config';
+import { Container } from 'native-base'
+const successImageUri = require('../../1.jpg');
+
 
 const { width } = Dimensions.get('window')
 const videosArray = videoData.videosArray
@@ -108,6 +112,14 @@ export default class Home extends React.Component<Props, State> {
       this.overlayTimer = setTimeout(() => this.setState({ overlay: false }), 3000)
     })
   }
+
+  onPressSignOut = () => {
+    this.setState({showPopup: false})
+    firebaseAuth.signOut().then(() => {
+      this.props.navigation.navigate('Login')
+    })
+  }
+
   youtubeSeekRight = () => {
     const { currentTime } = this.state
     this.handleDoubleTap(() => {
@@ -115,13 +127,6 @@ export default class Home extends React.Component<Props, State> {
     }, () => {
       this.setState({ overlay: true })
       this.overlayTimer = setTimeout(() => this.setState({ overlay: false }), 3000)
-    })
-  }
-
-  onPressSignOut = () => {
-    this.setState({showPopup: false})
-    firebaseAuth.signOut().then(() => {
-      this.props.navigation.navigate('Login')
     })
   }
 
@@ -178,12 +183,12 @@ export default class Home extends React.Component<Props, State> {
   render = () => {
     const { currentTime, duration, paused, overlay, fullscreen, videos, currentIndex, showPopup } = this.state
     const videoUrl = videos[currentIndex].url
-    const comments = videos[currentIndex].comments
+    const {totalLikes, totalViews, totalUnlikes, comments, title, subtitle} = videos[currentIndex]
 
     return (
-      <View onStartShouldSetResponder={() => this.closePopup()} style={style.container}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-        <View onStartShouldSetResponder={() => this.closePopup()} style={fullscreen ? style.fullscreenVideo : style.video}>
+      <View style={style.container}>
+        <ScrollView contentContainerStyle={{backgroundColor: '#EDF2F7'}} showsVerticalScrollIndicator={false}>
+        <View style={fullscreen ? style.fullscreenVideo : style.video}>
           <Video
             fullscreen={fullscreen}
             paused={paused}
@@ -194,7 +199,7 @@ export default class Home extends React.Component<Props, State> {
             onLoad={this.load}
             onProgress={this.progress}
           />
-          <View onStartShouldSetResponder={() => this.closePopup()} style={style.overlay}>
+          <View style={style.overlay}>
             {overlay ? <View style={{ ...style.overlaySet, backgroundColor: '#0006' }}>
               <Icon name='backward' style={style.icon} onPress={() => this.onPlayPreviousVideo()} />
               <Icon name={paused ? 'play' : 'pause'} style={style.icon} onPress={() => this.setState({ paused: !paused })} />
@@ -218,19 +223,44 @@ export default class Home extends React.Component<Props, State> {
               </View>}
           </View>
         </View>
-        <View style={style.logoutContainer}>
-          <TouchableOpacity style={style.userContainer} onPress={() => this.setState({showPopup: true})}>
-            <Icon name='user' size={25}/>
-          </TouchableOpacity>
-          {
-            showPopup ? 
-            <View style={style.popupContainer}>
-                <TouchableOpacity onPress={() => this.onPressSignOut()}  style={style.innerContainer}>
-                   <Text style={style.whiteText}>{strings.logout}</Text>
-                </TouchableOpacity>
-            </View> :
-            <View/>
-          }
+        <View style={{paddingHorizontal: 16, marginTop: 8}}>
+          <Text style={{color: 'blue'}}>{title}</Text>
+          <Text style={{fontSize: 16, marginVertical: 8}}>{subtitle}</Text>
+          <Text style={{color: '#718096'}}>{totalViews}</Text>
+        </View>
+        <View style={{justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', marginTop: 16, paddingHorizontal: 40}}>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Icon name='thumbs-up' size={20} color='grey'/>
+            <Text style={{color: 'grey'}}>{totalLikes}</Text>
+          </View>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Icon name='thumbs-down' size={20} color='grey'/>
+            <Text style={{color: 'grey'}}>{totalUnlikes}</Text>
+          </View>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Icon name='share' size={20} color='grey'/>
+            <Text style={{color: 'grey'}}>Share</Text>
+          </View>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Icon name='download' size={20} color='grey'/>
+            <Text style={{color: 'grey'}}>Download</Text>
+          </View>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Icon name='save' size={20} color='grey'/>
+            <Text style={{color: 'grey'}}>Save</Text>
+          </View>
+        </View>
+        <View style={{borderTopWidth: 1, borderTopColor: 'grey', borderBottomWidth: 1, borderBottomColor:'grey', paddingVertical: 8, flexDirection: 'row', marginTop: 16, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16}}>
+          <View style={{flexDirection: 'row'}}>
+            <Image style={{height: 32, width: 32, borderRadius: 16, alignSelf: 'center'}} source={successImageUri}/>
+            <View style={{marginLeft: 8}}>
+              <Text style={{fontSize: 18}}>The Viral Fever</Text>
+              <Text style={{color: 'grey'}}>6.5M Subscribers</Text>
+            </View>
+          </View>
+          <View>
+            <Text style={{color: '#E53E3E', fontSize: 16, fontWeight: 'bold'}}>SUBSCRIBE</Text>
+          </View>
         </View>
         <View>
             <Comments closePopup={() => this.closePopup()} comments={comments} onAddComment={(comment: string) => this.onAddComment(comment)}/>
@@ -243,9 +273,14 @@ export default class Home extends React.Component<Props, State> {
 
 const style = StyleSheet.create({
   container: {
+    backgroundColor: '#EDF2F7',
+    flex: 1,
+    paddingBottom: 8
   },
   logoutContainer: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    right: 8, top: 8,
+    position: 'absolute'
   },
   whiteText: {color: 'white'},
   innerContainer: {padding: 8, backgroundColor: '#44337A', width: '100%', alignItems: 'center', justifyContent: 'center'},

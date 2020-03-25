@@ -8,8 +8,9 @@ export const strings = {
     types_your_comment: 'Enter your comment',
     logout: 'Logout',
     login: 'Login',
-    loading: 'Loading',
-    sign_up: 'Sign Up',
-    already_have_an_account: 'Already have an account ? Login',
-    dont_have_account: `Don't have an account? Sign Up`
+    loading: 'Loading your data.',
+    sign_up: 'SignUp',
+    already_have_an_account: 'Already have an account ?',
+    dont_have_account: `Don't have an account?`,
+    take_a_while: 'This might take a while.'
 }

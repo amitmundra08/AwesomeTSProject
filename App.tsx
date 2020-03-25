@@ -5,6 +5,7 @@ import LoaderScreen from './src/screen/LoaderScreen'
 import LoginScreen from './src/screen/LoginScreen'
 import SignUp from './src/screen/SignUp'
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
+console.disableYellowBox = true;
 
 const SwitchNavigator = createSwitchNavigator(
   {

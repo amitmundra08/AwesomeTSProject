@@ -1,7 +1,10 @@
 import React from 'react'
-import {View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Keyboard} from 'react-native'
+import {View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Keyboard, Image} from 'react-native'
 import { strings } from '../../constants'
 import moment from 'moment'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+
+const successImageUri = require('../../../1.jpg');
 
 interface Props {
     comments: any
@@ -11,8 +14,10 @@ interface Props {
 
 class State {
     comment: string
+    showAddComent: boolean
     constructor() {
         this.comment = ''
+        this.showAddComent = false
     }
 }
 
@@ -21,13 +26,19 @@ export default class Comments extends React.Component<Props, State> {
         super(props)
         this.state = new State()
     }
+    onPressshowAddButton = () => {
+        this.setState({showAddComent: true})
+    }
     renderItem = (item: any) => {
         const {name, comment, date} = item.item
         const formatedDate = moment(date).fromNow();
         return (
-            <View style={{marginVertical: 8, paddingHorizontal: 16}}>
-                <Text style={styles.lightTextStyle}>{name} - {formatedDate}</Text>
-                <Text style={styles.darkTextStyle}>{comment}</Text>
+            <View style={{marginVertical: 8, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center'}}>
+                <Image source={successImageUri} style={{height: 32, width: 32, borderRadius: 16}}/>
+                <View style={{marginLeft: 8}}>
+                    <Text style={styles.lightTextStyle}>{name} - {formatedDate}</Text>
+                    <Text style={styles.darkTextStyle}>{comment}</Text>
+                </View>
             </View>
         )
     }
@@ -38,62 +49,73 @@ export default class Comments extends React.Component<Props, State> {
     }
 
     render(): JSX.Element {
-        const {comment} = this.state
+        const {comment, showAddComent} = this.state
         const {comments, onAddComment = () => {}, closePopup = () => {}} = this.props
         return (
-            <View onStartShouldSetResponder={() => closePopup()} style={styles.container}>
-                <View style={styles.textInputContainer}>
-                    <TextInput
-                        style={styles.textInput}          
-                        placeholder={strings.types_your_comment}
-                        value={comment}
-                        onChangeText={(comment) => this.setState({comment})}
-                    />
+            <View style={styles.container}>
+
+                {
+                    showAddComent ? (
+                        <View style={styles.textInputContainer}>
+                            <TextInput
+                                style={styles.textInput}          
+                                placeholder={strings.types_your_comment}
+                                value={comment}
+                                onChangeText={(comment) => this.setState({comment})}
+                            />
+                            <View style={styles.buttonContainer}>
+                            {
+                                comment.length > 0 ? <TouchableOpacity
+                                                        onPress={() => {onAddComment(comment), this.setState({comment: '', showAddComent: false}), Keyboard.dismiss()}}
+                                                        style={styles.buttonStyle}
+                                                    >
+                                                        <Icon name='paper-plane' size={20} color={'blue'}/>
+                                                    </TouchableOpacity> :
+                                                    <View/>
+                            }
+                            </View>
+                        </View>
+                    ) : <View/>
+                }
+                
+                <View style={{flexDirection: 'row', paddingHorizontal: 16, marginTop: 16, marginBottom: 8, justifyContent: 'space-between'}}>
+                    <View><Text style={styles.commentTextStyle}>{strings.comment}  {comments.length}</Text></View>
+                    <TouchableOpacity onPress={() => this.onPressshowAddButton()}>
+                        <Icon name='plus-circle' size={25} color='#38B2AC'/>
+                    </TouchableOpacity>
+
                 </View>
-                <View onStartShouldSetResponder={() => closePopup()} style={styles.buttonContainer}>
-                    {
-                        comment.length > 0 ? <TouchableOpacity
-                                                onPress={() => {onAddComment(comment), this.setState({comment: ''}), Keyboard.dismiss()}}
-                                                style={styles.buttonStyle}
-                                            >
-                                                <Text style={styles.whiteText}>{strings.add_comment}</Text>
-                                            </TouchableOpacity> :
-                                            <View style={[styles.buttonStyle, styles.disabledButton]}>
-                                                     <Text style={styles.whiteText}>{strings.add_comment}</Text>
-                                            </View>
-                    }
-                </View>
-                    <Text style={styles.commentTextStyle}>{strings.comment}  {comments.length}</Text>
-                    <FlatList
-                        ItemSeparatorComponent={this.FlatListItemSeparator}
-                        data={comments}
-                        renderItem={this.renderItem}
-                        keyExtractor={(item: any) => item.id}
-                        extraData={this.state}
-                    />
+                <FlatList
+                    ItemSeparatorComponent={this.FlatListItemSeparator}
+                    data={comments}
+                    renderItem={this.renderItem}
+                    keyExtractor={(item: any) => item.id}
+                    extraData={this.state}
+                />
             </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    container: {padding: 0},
+    container: {padding: 0, backgroundColor: '#EDF2F7'},
     textInput: {
-        borderWidth: 1,
-        borderColor: '#44337A',
+        borderBottomWidth: 1,
+        borderBottomColor: '#44337A',
         padding: 5,
         fontSize: 16,
         height: 40,
         elevation: 0,
-        borderRadius: 2
+        borderRadius: 2,
+        backgroundColor: '#FAF5FF'
     },
     textInputContainer: {flex: 1, padding: 16},
-    buttonContainer: {alignItems: 'flex-end', paddingHorizontal: 16},
-    buttonStyle: {justifyContent: 'center', alignItems: 'center', width: '40%', height: 50, padding: 16, backgroundColor: '#44337A', borderRadius: 4},
+    buttonContainer: {alignItems: 'flex-end'},
+    buttonStyle: {position: 'absolute', right: 16, top: -32},
     disabledButton: {backgroundColor: 'grey'},
     whiteText: {color: 'white'},
-    commentTextStyle: {fontSize: 16, color: 'black', padding: 16},
-    seperatorStyle: {height: 0.5, width: '100%', backgroundColor: '#C8C8C8'},
+    commentTextStyle: {fontSize: 16, color: 'black'},
+    seperatorStyle: {height: 0.5, width: '100%', backgroundColor: '#C8C8C8', marginHorizontal: 16, marginVertical: 4},
     lightTextStyle: {color: '#718096'},
     darkTextStyle: {color: '#2D3748'}
 })
