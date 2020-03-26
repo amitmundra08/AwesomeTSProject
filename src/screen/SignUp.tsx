@@ -6,7 +6,7 @@ import { Container, Button, Card, } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 const height = Dimensions.get('screen').height
 const width = Dimensions.get('screen').width
-const successImageUri = require('../../1.jpg');
+const successImageUri = require('../../image1.jpg');
 
 
 interface Props {

@@ -19,7 +19,7 @@ import { strings } from '../../src/constants'
 import {videoData} from '../data-sources/videoData'
 import { firebaseAuth } from '../environment/config';
 import { Container } from 'native-base'
-const successImageUri = require('../../1.jpg');
+const successImageUri = require('../../image1.jpg');
 
 
 const { width } = Dimensions.get('window')

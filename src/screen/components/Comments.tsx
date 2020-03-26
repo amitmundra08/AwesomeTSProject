@@ -4,7 +4,7 @@ import { strings } from '../../constants'
 import moment from 'moment'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 
-const successImageUri = require('../../../1.jpg');
+const successImageUri = require('../../../image1.jpg');
 
 interface Props {
     comments: any
